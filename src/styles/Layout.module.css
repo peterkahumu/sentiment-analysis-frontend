@@ -1,0 +1,120 @@
+/* ============================
+   HEADER — dark shell
+   ============================ */
+.header {
+  background: var(--shell);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.headerInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logoLink {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-decoration: none;
+}
+
+.logoMark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  border-radius: 7px;
+  letter-spacing: 0.04em;
+  box-shadow: 0 0 0 2px rgba(37,99,235,0.35);
+}
+
+.logoText {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  letter-spacing: -0.01em;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.navLink {
+  font-size: 0.875rem;
+  color: #64748b;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+
+.navLink:hover {
+  color: #e2e8f0;
+}
+
+/* ============================
+   FOOTER — dark shell
+   ============================ */
+.footer {
+  background: var(--shell);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  margin-top: 5rem;
+}
+
+.footerInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.footerText {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 0.3rem;
+}
+
+.footerText strong {
+  color: #94a3b8;
+}
+
+.footerSub {
+  font-size: 0.78rem;
+  color: #334155;
+}
+
+/* ============================
+   ACCURACY WARNING — slim
+   ============================ */
+.warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.6rem 0.85rem;
+  background: #fffbeb;
+  border-left: 3px solid #f59e0b;
+  border-radius: 0 6px 6px 0;
+  font-size: 0.8rem;
+  color: #78350f;
+  line-height: 1.45;
+  margin-bottom: 1rem;
+}
+
+.warningIcon {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  margin-top: 0.05rem;
+}
