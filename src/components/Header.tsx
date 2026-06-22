@@ -2,6 +2,8 @@ import Link from 'next/link';
 import styles from '../styles/Layout.module.css';
 
 export default function Header() {
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://sentiment-analysis-iq.vercel.app";
+
   return (
     <header className={styles.header}>
       <div className={styles.headerInner}>
@@ -12,7 +14,7 @@ export default function Header() {
         <nav className={styles.nav}>
           <Link href="/" className={styles.navLink}>Analyze</Link>
           <a
-            href="https://fastapi.tiangolo.com/"
+            href={`${backendUrl}/docs`}
             target="_blank"
             rel="noopener noreferrer"
             className={styles.navLink}

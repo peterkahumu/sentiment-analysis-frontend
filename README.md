@@ -3,6 +3,8 @@
 > **Part of a three-repository system.**  
 > See also: [Model Training](https://github.com/peterkahumu/Sentiment-analysis-model-training) · [Backend API](https://github.com/peterkahumu/sentiment-analysis-backend)
 
+**🌐 Live site:** [sentiment-analysis-iq.vercel.app](https://sentiment-analysis-iq.vercel.app)
+
 ---
 
 ## Overview
@@ -54,10 +56,21 @@ frontend/
 The frontend does **not** call the backend directly from the browser. Instead, Next.js's [URL rewrites](https://nextjs.org/docs/pages/api-reference/config/next-config-js/rewrites) proxy all `/api/*` requests to the backend service:
 
 ```
-Browser  →  POST /api/predict  →  Next.js rewrite  →  http://backend:8000/predict
+Browser  →  POST /api/predict  →  Next.js rewrite (server)  →  $BACKEND_URL/predict
 ```
 
-This keeps the backend URL hidden from the client and avoids CORS issues. The proxy target is configured via the `BACKEND_URL` environment variable (defaults to `http://localhost:8000`).
+This keeps the backend URL hidden from the client and avoids CORS issues.
+
+### Environment Variables — Two Variables, One URL
+
+Next.js runs code in two places: on the **server** (API rewrites, build) and in the **browser** (React components). For security, Next.js strips all `process.env.*` variables from the browser bundle by default — only variables prefixed with `NEXT_PUBLIC_` are exposed to the client.
+
+This project therefore uses two variables that typically point to the same backend URL:
+
+| Variable | Used by | Visible to browser? | Purpose |
+|---|---|---|---|
+| `BACKEND_URL` | `next.config.ts` rewrites (server) | ❌ No | Proxy `/api/*` requests to the backend |
+| `NEXT_PUBLIC_BACKEND_URL` | `Header.tsx` (browser) | ✅ Yes | Build the **API Docs ↗** link in the nav |
 
 ### User Flow
 
@@ -115,15 +128,20 @@ The dev server proxies `/api/*` to `http://localhost:8000` automatically (see `n
 
 ### Environment Variables
 
-| Variable | Default | Description |
-|---|---|---|
-| `BACKEND_URL` | `http://localhost:8000` | Base URL of the FastAPI backend |
-
-Set this when running in Docker or production:
+Create a `.env.local` file in the `frontend/` directory for local development:
 
 ```bash
-BACKEND_URL=http://backend:8000 npm run build && npm run start
+# frontend/.env.local
+BACKEND_URL=http://localhost:8000
+NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
 ```
+
+| Variable | Default | Description |
+|---|---|---|
+| `BACKEND_URL` | `http://localhost:8000` | Backend URL used by the **server-side** proxy rewrite |
+| `NEXT_PUBLIC_BACKEND_URL` | `http://localhost:8000` | Backend URL injected into the **browser bundle** (API Docs link) |
+
+> **Why two variables?** Next.js hides all env variables from the browser for security. Only `NEXT_PUBLIC_*` prefixed variables are baked into the client bundle at build time. Both variables should point to the same backend URL.
 
 ---
 
@@ -144,7 +162,10 @@ The production build uses Next.js **standalone output** (`output: "standalone"` 
 
 ```bash
 docker build -t sentiment-frontend .
-docker run -p 3000:3000 -e BACKEND_URL=http://localhost:8000 sentiment-frontend
+docker run -p 3000:3000 \
+  -e BACKEND_URL=http://localhost:8000 \
+  -e NEXT_PUBLIC_BACKEND_URL=http://localhost:8000 \
+  sentiment-frontend
 ```
 
 ### Run the full stack with Docker Compose
@@ -187,4 +208,15 @@ model_training  ──(model_artifacts)──▶  backend  ──(REST API /api/
 |---|---|---|
 | **model_training** | Train & evaluate the model | [github.com/peterkahumu/Sentiment-analysis-model-training](https://github.com/peterkahumu/Sentiment-analysis-model-training) |
 | **backend** | Serve predictions via FastAPI | [github.com/peterkahumu/sentiment-analysis-backend](https://github.com/peterkahumu/sentiment-analysis-backend) |
-| **frontend** (this) | User-facing Next.js UI | — |
+| **frontend** (this) | User-facing Next.js UI | [sentiment-analysis-iq.vercel.app](https://sentiment-analysis-iq.vercel.app) |
+
+### Deploying on Vercel
+
+Add these two environment variables in **Vercel → Project Settings → Environment Variables**:
+
+| Key | Value |
+|---|---|
+| `BACKEND_URL` | `https://sentiment-analysis-backend.fastapicloud.dev` |
+| `NEXT_PUBLIC_BACKEND_URL` | `https://sentiment-analysis-backend.fastapicloud.dev` |
+
+After adding or changing these variables, trigger a new deployment so Next.js can bake `NEXT_PUBLIC_BACKEND_URL` into the client bundle.

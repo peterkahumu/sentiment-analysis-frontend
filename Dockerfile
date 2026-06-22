@@ -13,6 +13,7 @@ RUN npm run build
 FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV production
+ENV NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
 
 COPY --from=builder /app/next.config.ts ./
 COPY --from=builder /app/public ./public
